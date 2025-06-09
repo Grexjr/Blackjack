@@ -33,9 +33,16 @@ public class Tester {
         System.out.println(round.getRoundDeck().getContents().size());
     }
 
-    private static void testChoiceFunction(){
+    private static void testChoiceFunction(int q){
         Round round = new Round();
-        Utilities.hitOrNo(Utilities.askPlayerInput("Hit or Stand?"),round);
+        if(q == 1) {
+            Utilities.askQuestion(round, Question.HITORSTAND);
+            System.out.println(round.getHitStatus());
+        }
+        else if(q == 2) {
+            Utilities.askQuestion(round,Question.ONEORELEVEN);
+            System.out.println(round.getAceValue());
+        }
     }
 
     private static void testGame(){
@@ -45,7 +52,7 @@ public class Tester {
 
     public static void main(String args[]){
         //testDealing();
-        //testChoiceFunction();
+        //testChoiceFunction(1);
         testGame();
     }
 }

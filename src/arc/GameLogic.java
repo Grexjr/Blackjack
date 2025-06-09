@@ -8,6 +8,7 @@ public class GameLogic {
     // The variables needed by the game logic
     private static GameState state;
     private static Round round;
+    private static boolean playerAceEleven;
 
     // Method to initialize the game state
     public static void initializeGame(){state = new GameState();}
@@ -30,12 +31,14 @@ public class GameLogic {
         int tempValue3;
 
         // Evaluate card 1
-        if(player.getCard1().getValue() > 10){tempValue1 = 10;}
-        else{tempValue1 = player.getCard1().getValue();}
+        if(player.getCard1().getValue() > 10){
+            tempValue1 = 10;
+        } else{tempValue1 = player.getCard1().getValue();}
 
         // Evaluate card 2
-        if(player.getCard2().getValue() > 10){tempValue2 = 10;}
-        else{tempValue2 = player.getCard1().getValue();}
+        if(player.getCard2().getValue() > 10){
+            tempValue2 = 10;
+        } else{tempValue2 = player.getCard1().getValue();}
 
         // Evaluate card 3 with standing in mind (when it is null)
         if(player.getCard3() != null && player.getCard3().getValue() > 10){
@@ -51,11 +54,12 @@ public class GameLogic {
 
     // Method to deal the cards to the players in the round
     public static void dealCards(){
-        // The first card is dealt to the player's first slot
+        // The first card is dealt to the player's first slot and check if ace
         round.dealCard(round.getPlayer1(),1);
+        checkPlayerAce(round.getPlayer1().getCard1());
         // The second card is dealt to the house's first slot
         round.dealCard(round.getPlayer2(),1);
-        // The third card is dealt to the player's second slot
+        // The third card is dealt to the player's second slot and check if ace
         round.dealCard(round.getPlayer1(),2);
         // The fourth card is dealt to the house's second slot
         round.dealCard(round.getPlayer2(),2);
@@ -65,14 +69,45 @@ public class GameLogic {
         System.out.println("House has " + round.getPlayer2().getCard1());
     }
 
+    // Function for dealer to determine if ace is 1 or eleven - to be fair they do the same as player
+    public static int checkDealerAce(){
+        // Value to return the changed sum
+        int trueSum = 0;
+        // Checks if exactly 1 card is ace, then adds 10 and checks if over 21
+        if(round.getPlayer2().getCard1().getValue() == 1 ^ round.getPlayer2().getCard2().getValue() == 1){
+            int tempSum = sumPlayerHand(round.getPlayer2()) + 10;
+            if(tempSum > 21){
+                System.out.println("Dealer treats Ace as 1!");
+                trueSum = sumPlayerHand(round.getPlayer2());
+                return trueSum;
+            } else{
+                System.out.println("Dealer treats Ace as 11!");
+                trueSum = tempSum;
+            }
+        } else if (round.getPlayer2().getCard1().getValue() == 1 && round.getPlayer2().getCard2().getValue() == 1){
+            System.out.println("Dealer treats Ace as 1!");
+            trueSum = sumPlayerHand(round.getPlayer2());
+            return trueSum;
+        }
+        return 0;
+    }
+
+    // Method to check if player has ace in a specific slot
+    public static void checkPlayerAce(Card card){
+        if(card.getValue() == 1){
+            Utilities.askQuestion(round,Question.ONEORELEVEN);
+        }
+    }
+
     // Method to ask if the player wishes to hit or stand
-    public static void askHitOrStand(){Utilities.hitOrNo(Utilities.askPlayerInput("Hit or Stand?"),round);}
+    public static void askHitOrStand(){Utilities.askQuestion(round,Question.HITORSTAND);}
 
     // Method for playing after the player decides to hit or stand
     public static void playAfterHitOrStand(){
         // If hit, add extra card to them
         if(round.getHitStatus()){
             round.dealCard(round.getPlayer1(),3);
+            System.out.println(round.getPlayer1().getCard3());
         } else if(!round.getHitStatus()){} // If they stand, do nothing and move on
         else{ //If something else, break with error code
             System.out.println("Fatal error! Hit status unexpected value.");
@@ -85,7 +120,7 @@ public class GameLogic {
         // Sum and store the players' hands
         int p1Sum = sumPlayerHand(round.getPlayer1());
         System.out.println("Player has " + p1Sum);
-        int p2Sum = sumPlayerHand(round.getPlayer2());
+        int p2Sum = checkDealerAce();
         System.out.println("House has " + p2Sum);
 
         // Win and loss conditions

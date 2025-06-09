@@ -1,44 +1,65 @@
 package arc;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 import obj.*;
 
 public class Utilities {
 
     // Static methods for general utilities; player input, etc.
-    private static String questionBeingAsked;
 
-    // Method for asking for player input - only hardcoded for hit or stand right now but can probably use array
-    // To do things with more options and different text
-    // May need an exception catcher for if a non-number is inputted
-    public static int askPlayerInput(String question){
-        questionBeingAsked = question;
-        Scanner kb = new Scanner(System.in);
-        System.out.println(question);
-        System.out.println("1: Hit");
-        System.out.println("2: Stand");
-        int choice = kb.nextInt();
-        return choice;
-    }
+    // General format for asking questions
+    // Only does 2 answers, might need a way to iterate using an array if more than two answers are possible
+    public static void askQuestion(Round round, Question question){
+        System.out.println(question.getQuestion());
+        System.out.println(question.getAnswerOne());
+        System.out.println(question.getAnswerTwo());
 
-    // Method for changing hit status depending on answer - using recursion ;) - add try/catch around
-    // to ensure only numbers are put in; try this code, if catches, then recurse? not sure if that will work.
-    public static void hitOrNo(int choice, Round round){
-        if(choice == 1){
-            round.setHitStatus(true);
-        } else if(choice == 2){
-            round.setHitStatus(false);
-        } else{
-            System.out.println("Invalid input!");
-            hitOrNo(askPlayerInput(questionBeingAsked),round);
+        int choice = playerInputOpportunity();
+
+        if(question.equals(Question.HITORSTAND)){
+            switch(choice){
+                case 1:
+                    round.setHitStatus(true);
+                    break;
+                case 2:
+                    round.setHitStatus(false);
+                    break;
+                default:
+                    System.out.println("Invalid input!");
+                    askQuestion(round,question);
+                    break;
+            }
+        } else if(question.equals(Question.ONEORELEVEN)){
+            switch(choice){
+                case 1:
+                    round.setAceValue(1);
+                    break;
+                case 2:
+                    round.setAceValue(11);
+                    break;
+                default:
+                    System.out.println("Invalid input!");
+                    askQuestion(round,question);
+                    break;
+            }
         }
     }
 
+    // Method for asking for player input
+    public static int playerInputOpportunity(){
+        Scanner kb = new Scanner(System.in);
+        int choice = -1;
+        try {
+            choice = kb.nextInt();
+        } catch(InputMismatchException e){
+            System.out.println("Please input a number!");
+            kb.next();
+            return playerInputOpportunity();
+        }
 
-
-
-
-
+        return choice;
+    }
 
 
 }

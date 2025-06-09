@@ -7,6 +7,7 @@ public class Round {
     protected Deck roundDeck;
     protected Player player1,player2;
     protected boolean hitStatus;
+    protected int aceValue;
 
     // The constructor for the round
     public Round(){
@@ -14,6 +15,7 @@ public class Round {
         this.player1 = new Player();
         this.player2 = new Player();
         this.hitStatus = false;
+        this.aceValue = 1;
     }
 
     // The getters
@@ -21,9 +23,11 @@ public class Round {
     public Player getPlayer1(){return this.player1;}
     public Player getPlayer2(){return this.player2;}
     public boolean getHitStatus(){return this.hitStatus;}
+    public int getAceValue(){return this.aceValue;}
 
     // The setters
     public void setHitStatus(boolean status){this.hitStatus = status;}
+    public void setAceValue(int value){this.aceValue = value;}
 
     // Method to deal a card to a player, then remove that card from the deck. Maybe this should go elsewhere
     public void dealCard(Player player, int cardNumber){
