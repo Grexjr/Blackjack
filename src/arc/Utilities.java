@@ -10,6 +10,7 @@ public class Utilities {
 
     // General format for asking questions
     // Only does 2 answers, might need a way to iterate using an array if more than two answers are possible
+    // Maybe put this into the question file
     public static void askQuestion(Round round, Question question){
         System.out.println(question.getQuestion());
         System.out.println(question.getAnswerOne());
@@ -20,10 +21,10 @@ public class Utilities {
         if(question.equals(Question.HITORSTAND)){
             switch(choice){
                 case 1:
-                    round.setHitStatus(true);
+                    round.getPlayer1().setHitStatus(true);
                     break;
                 case 2:
-                    round.setHitStatus(false);
+                    round.getPlayer1().setHitStatus(false);
                     break;
                 default:
                     System.out.println("Invalid input!");
@@ -33,15 +34,27 @@ public class Utilities {
         } else if(question.equals(Question.ONEORELEVEN)){
             switch(choice){
                 case 1:
-                    round.setAceValue(1);
+                    round.getPlayer1().setAceStatus(false);
                     break;
                 case 2:
-                    round.setAceValue(11);
+                    round.getPlayer1().setAceStatus(true);
                     break;
                 default:
                     System.out.println("Invalid input!");
                     askQuestion(round,question);
                     break;
+            }
+        } else if(question.equals(Question.CONTINUEORNOT)){
+            switch(choice){
+                case 1:
+                    GameLogic.continueGame();
+                    break;
+                case 2:
+                    GameLogic.endGame(); // Sometimes will ask twice about continuing and print state, not sure why
+                    break;
+                default:
+                    System.out.println("Invalid input!");
+                    askQuestion(round,question);
             }
         }
     }

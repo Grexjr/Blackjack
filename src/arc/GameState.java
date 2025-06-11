@@ -14,7 +14,7 @@ public class GameState {
         this.wins = 0;
         this.losses = 0;
         this.ties = 0;
-        this.winPercent = calcWinPercent();
+        this.winPercent = 0;
     }
 
     // The getters
@@ -31,11 +31,12 @@ public class GameState {
     protected void setWins(int i){this.wins = i;}
     protected void setLosses(int i){this.losses = i;}
     protected void setTies(int i){this.ties = i;}
+    protected void setWinPercent(double d){this.winPercent = d;}
 
     // The calculation for win percent - makes sure not to divide by zero
-    protected double calcWinPercent(){
-        if(losses + ties == 0) {return 0;}
-        else{return wins / (losses + ties);}
+    protected void calcWinPercent(){
+        if(this.losses + this.ties == 0) {this.setWinPercent(0);}
+        else{this.setWinPercent((this.wins / (this.losses + this.ties)) * 100);}
     }
 
     // The toString of the game state to be printed at the end of every round
@@ -45,6 +46,7 @@ public class GameState {
         String winsString = "Wins: " + this.wins + "\n";
         String lossesString = "Losses: " + this.losses + "\n";
         String tiesString = "Ties: " + this.ties + "\n";
+        this.calcWinPercent();
         String winPercentString = "Win Percentage: " + this.winPercent + "\n";
         String gameStateString = handString + winsString + lossesString + tiesString + winPercentString;
         return gameStateString;

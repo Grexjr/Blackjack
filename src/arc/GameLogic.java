@@ -5,13 +5,18 @@ import obj.*;
 public class GameLogic {
     // The static functions of the game logic that act upon the objects
 
+    // Update: should iterate through every card every time one is added to see if an ace is added to account for third or fourth position aces
+    // Seemingly after player busts, the logic continues on and needs to end the round or the game to stop that
+
     // The variables needed by the game logic
     private static GameState state;
     private static Round round;
-    private static boolean playerAceEleven;
 
     // Method to initialize the game state
     public static void initializeGame(){state = new GameState();}
+
+    public static void endGame(){state.setGameStatus(false);}
+    public static void continueGame(){state.setGameStatus(true);}
 
     // Method to start the round by creating new round object
     public static void startRound(){round = new Round();}
@@ -19,138 +24,239 @@ public class GameLogic {
     // Method that occurs at the end of each round to print gamestate and ask player if continue
     public static void endRound(){
         System.out.println(state);
-        // Then will ask if player wants to continue, which keeps status set to true. for now, sets to false and ends loop.
-        state.setGameStatus(false);
+        Utilities.askQuestion(round,Question.CONTINUEORNOT);
     }
 
-    // Method to sum up players hands
-    public static int sumPlayerHand(Player player){
-        // Temp values to handle all face cards being 10 and ace handling
-        int tempValue1;
-        int tempValue2;
-        int tempValue3;
+    // Method to sum up players hands with the included architecture for if ace is 1 or 11
+    public static void sumPlayerHand(Player player){
+        int sum = 0;
+        // If ace is 1
+        if(!player.getAceStatus()) {
+            for(Card card : player.getPlayerHand()){sum += card.getCardRank().getRankValue();}
+        }
+        // If ace is 11
+        else{
+            for(Card card : player.getPlayerHand()){
+                // Sums up every card, ace being 1
+                sum += card.getCardRank().getRankValue();
+                // If the card is an ace, then it adds 10 to the sum (1 + 10 for 11)
+                if(card.getCardRank().equals(CardRank.ACE)){sum += 10;}
+            }
+        }
+        player.setHandSum(sum);
+    }
 
-        // Evaluate card 1
-        if(player.getCard1().getValue() > 10){
-            tempValue1 = 10;
-        } else{tempValue1 = player.getCard1().getValue();}
+    // Method to check if player busts
+    public static void checkBustOrBlackjack(Player player){
+        // Check if player busts
+        if(player.getHandSum() > 21){
+            player.setBusted(true);
+        }
+        // Check if player has blackjack
+        else if(player.getHandSum() == 21){
+            player.setBlackjack(true);
+        }
+    }
 
-        // Evaluate card 2
-        if(player.getCard2().getValue() > 10){
-            tempValue2 = 10;
-        } else{tempValue2 = player.getCard1().getValue();}
+    // Method to actually run the bust or blackjack code -- hardcoded just to player, need to swap that around
+    public static void runPlayerBustOrBlackjack(Player player){
+        checkBustOrBlackjack(player);
+        if(player.getBusted()){
+            System.out.println("Player busts! \n Player loses.");
+            state.setLosses(state.getLosses()+1);
+            endRound();
+        } else if(player.getBlackJack()){
+            System.out.println("Player has blackjack! \n Player wins.");
+            state.setWins(state.getWins()+1);
+            endRound();
+        }
+    }
 
-        // Evaluate card 3 with standing in mind (when it is null)
-        if(player.getCard3() != null && player.getCard3().getValue() > 10){
-            tempValue3 = 10;
-        } else if(player.getCard3() == null){
-            tempValue3 = 0;
-        } else{tempValue3 = player.getCard1().getValue();}
-
-        // Sum the values and return it
-        int sum = tempValue1 + tempValue2 + tempValue3;
-        return sum;
+    // Method to run blackjack or bust for when house has it -- hardcoded, can make more general
+    public static void runHouseBustOrBlackjack(Player house){
+        checkBustOrBlackjack(house);
+        if(house.getBusted()){
+            System.out.println("House busts! \n Player wins.");
+            state.setWins(state.getWins()+1);
+            endRound();
+        } else if(house.getBlackJack()){
+            System.out.println("House has blackjack! \n House wins.");
+            state.setLosses(state.getLosses()+1);
+            endRound();
+        }
     }
 
     // Method to deal the cards to the players in the round
     public static void dealCards(){
-        // The first card is dealt to the player's first slot and check if ace
-        round.dealCard(round.getPlayer1(),1);
-        checkPlayerAce(round.getPlayer1().getCard1());
-        // The second card is dealt to the house's first slot
-        round.dealCard(round.getPlayer2(),1);
-        // The third card is dealt to the player's second slot and check if ace
-        round.dealCard(round.getPlayer1(),2);
-        // The fourth card is dealt to the house's second slot
-        round.dealCard(round.getPlayer2(),2);
+        // The first card is dealt to the player's first slot and checked if ace, asks if so
+        round.dealCard(round.getPlayer1());
+        System.out.println("Player gets " + round.getPlayer1().getCard(0));
+        if(checkPlayerAce(round.getPlayer1().getCard(0))){Utilities.askQuestion(round,Question.ONEORELEVEN);}
 
-        // Have the system read out what cards the player and dealer has
-        System.out.println("You have " + round.getPlayer1().getCard1() + "and " + round.getPlayer1().getCard2());
-        System.out.println("House has " + round.getPlayer2().getCard1());
-    }
+        // The second card is dealt to the house's hand - ace checking goes after they get both cards
+        round.dealCard(round.getPlayer2());
 
-    // Function for dealer to determine if ace is 1 or eleven - to be fair they do the same as player
-    public static int checkDealerAce(){
-        // Value to return the changed sum
-        int trueSum = 0;
-        // Checks if exactly 1 card is ace, then adds 10 and checks if over 21
-        if(round.getPlayer2().getCard1().getValue() == 1 ^ round.getPlayer2().getCard2().getValue() == 1){
-            int tempSum = sumPlayerHand(round.getPlayer2()) + 10;
-            if(tempSum > 21){
-                System.out.println("Dealer treats Ace as 1!");
-                trueSum = sumPlayerHand(round.getPlayer2());
-                return trueSum;
-            } else{
-                System.out.println("Dealer treats Ace as 11!");
-                trueSum = tempSum;
-            }
-        } else if (round.getPlayer2().getCard1().getValue() == 1 && round.getPlayer2().getCard2().getValue() == 1){
-            System.out.println("Dealer treats Ace as 1!");
-            trueSum = sumPlayerHand(round.getPlayer2());
-            return trueSum;
-        }
-        return 0;
-    }
-
-    // Method to check if player has ace in a specific slot
-    public static void checkPlayerAce(Card card){
-        if(card.getValue() == 1){
+        // The third card is dealt to the player's hand and checked if ace, if first card is not ace
+        round.dealCard(round.getPlayer1());
+        System.out.println("Player gets " + round.getPlayer1().getCard(1));
+        if(!checkPlayerAce(round.getPlayer1().getCard(0)) && checkPlayerAce(round.getPlayer1().getCard(1))){
             Utilities.askQuestion(round,Question.ONEORELEVEN);
         }
+
+        // The fourth card is dealt to the house's hand and then ace logic is done for dealer
+        round.dealCard(round.getPlayer2());
+        houseAceCalculation(); // this impacts the sumplayerhand by setting the ace to 1 or 11 for the dealer
+
+        // Both hands are then summed
+        sumPlayerHand(round.getPlayer1());
+        sumPlayerHand(round.getPlayer2());
+
+        // The card information is then printed where both player cards revealed and only one dealer card revealed
+        printDealtHands();
+
+        // Check if player has blackjack immediately or busts immediately
+        runPlayerBustOrBlackjack(round.getPlayer1());
+    }
+
+    public static void printDealtHands(){
+        System.out.println("You have " + round.getPlayer1().getCard(0)
+               + "and " + round.getPlayer1().getCard(1) + "\n" + "Sum: " + round.getPlayer1().getHandSum());
+        System.out.println("House has " + round.getPlayer2().getCard(0));
+    }
+
+    // Method for dealer to determine if ace is 1 or 11 - technically they have advantage bc do it after the fact
+    public static void houseAceCalculation(){
+        int tempSum = 0;
+        Player house = round.getPlayer2();
+        for(Card card : house.getPlayerHand()){
+            tempSum += card.getCardRank().getRankValue();
+            if(card.getCardRank().equals(CardRank.ACE)){
+                tempSum += 10;
+            }
+        }
+        if(tempSum > 21){
+            house.setAceStatus(false);
+        } else{house.setAceStatus(true);}
+    }
+
+    // Method to check if the inputted card is an ace
+    public static boolean checkPlayerAce(Card card){
+        boolean aceOrNot = false;
+        if(card.getCardRank().equals(CardRank.ACE)){aceOrNot = true;}
+        return aceOrNot;
     }
 
     // Method to ask if the player wishes to hit or stand
     public static void askHitOrStand(){Utilities.askQuestion(round,Question.HITORSTAND);}
 
-    // Method for playing after the player decides to hit or stand
-    public static void playAfterHitOrStand(){
-        // If hit, add extra card to them
-        if(round.getHitStatus()){
-            round.dealCard(round.getPlayer1(),3);
-            System.out.println(round.getPlayer1().getCard3());
-        } else if(!round.getHitStatus()){} // If they stand, do nothing and move on
-        else{ //If something else, break with error code
-            System.out.println("Fatal error! Hit status unexpected value.");
-            System.exit(1);
+    // Method for playing hit or stand
+    public static void playHitOrStand(){
+        while(round.getPlayer1().getHandSum() < 21){
+            askHitOrStand();
+            if(round.getPlayer1().getHitStatus()){
+                System.out.println("Player hits! ");
+                round.dealCard(round.getPlayer1());
+                System.out.println("Player gets: " +
+                        round.getPlayer1().getPlayerHand().get(round.getPlayer1().getPlayerHand().size()-1));
+                sumPlayerHand(round.getPlayer1());
+                System.out.println("Player has: " + round.getPlayer1().getHandSum());
+                runPlayerBustOrBlackjack(round.getPlayer1());
+            }else{
+                System.out.println("Player chooses to stand!");
+                break;
+            }
         }
     }
 
-    // Method to check who has won!
-    public static void checkWin(){
-        // Sum and store the players' hands
-        int p1Sum = sumPlayerHand(round.getPlayer1());
-        System.out.println("Player has " + p1Sum);
-        int p2Sum = checkDealerAce();
-        System.out.println("House has " + p2Sum);
+    // Method to reveal dealer's other card
+    public static void revealHouseHand(){
+        boolean houseHasAce = false;
 
-        // Win and loss conditions
-        if(p1Sum > 21 && p2Sum <= 21){
-            System.out.println("Player is bust! \n Player loses.");
-            state.setLosses(state.getLosses() + 1);
-        } else if(p1Sum == 21 && p2Sum != 21){
-            System.out.println("Player has Blackjack! \n Player wins.");
-            state.setWins(state.getWins() + 1);
-        } else if((p1Sum == 21 && p2Sum == 21) || (p1Sum > 21 && p2Sum > 21) || ((p1Sum == p2Sum) && p1Sum < 21)){
-            System.out.println("Tie! \n Nobody wins.");
-            state.setTies(state.getTies() + 1);
-        } else if(p1Sum < 21 && p2Sum > p1Sum){
-            System.out.println("Player loses!");
-            state.setLosses(state.getLosses() + 1);
-        } else if(p1Sum < 21 && p2Sum < p1Sum){
-            System.out.println("Player wins!");
-            state.setWins(state.getWins() + 1);
+        for(Card card : round.getPlayer2().getPlayerHand()){
+            if(card.getCardRank().equals(CardRank.ACE)){
+                houseHasAce = true;
+            }else{
+                houseHasAce = false;
+            }
+        }
+
+        System.out.println("House second card is: " +
+                round.getPlayer2().getCard(round.getPlayer2().getPlayerHand().size()-1));
+        sumPlayerHand(round.getPlayer2());
+        if(houseHasAce){
+            if(round.getPlayer2().getAceStatus()){
+                System.out.println("House treats Ace as 11.");
+            }else{
+                System.out.println("House treats Ace as 1.");
+            }
+        }
+        System.out.println("House has " + round.getPlayer2().getHandSum());
+    }
+
+    // Method for hitting or standing dealer
+    public static void houseHitOrStand(){
+        sumPlayerHand(round.getPlayer2());
+        if(round.getPlayer2().getHandSum() < 17){
+            round.getPlayer2().setHitStatus(true);
+        }else{
+            round.getPlayer2().setHitStatus(false);
+        }
+    }
+
+    // Method for running hitting dealer
+    public static void houseHit(){
+        while(round.getPlayer2().getHandSum() < 17){
+            System.out.println("House has less than 17! \n House must hit.");
+            if(round.getPlayer2().getHitStatus()){
+                round.dealCard(round.getPlayer2());
+                System.out.println("House gets: " +
+                        round.getPlayer2().getPlayerHand().get(round.getPlayer2().getPlayerHand().size()-1));
+                sumPlayerHand(round.getPlayer2());
+                System.out.println("House has: " + round.getPlayer2().getHandSum());
+                runHouseBustOrBlackjack(round.getPlayer2());
+            }else{
+                round.getPlayer2().setHitStatus(false);
+                break;
+            }
+        }
+    }
+
+
+
+    // Method to check who has won!
+    public static void compareHands(){
+        if(!round.getPlayer1().getBlackJack() && !round.getPlayer2().getBlackJack()
+                && !round.getPlayer1().getBusted() && !round.getPlayer2().getBusted()){
+            if(round.getPlayer1().getHandSum() > round.getPlayer2().getHandSum()){
+                System.out.println("Player wins " + round.getPlayer1().getHandSum() + " to " +
+                        round.getPlayer2().getHandSum());
+                state.setWins(state.getWins()+1);
+            } else if(round.getPlayer1().getHandSum() < round.getPlayer2().getHandSum()){
+                System.out.println("Player loses " + round.getPlayer1().getHandSum() + " to " +
+                        round.getPlayer2().getHandSum());
+                state.setLosses(state.getLosses()+1);
+            } else if(round.getPlayer1().getHandSum() == round.getPlayer2().getHandSum()){
+                System.out.println("Player and House tie " + round.getPlayer1().getHandSum() + " to " +
+                        round.getPlayer2().getHandSum());
+                state.setTies(state.getTies()+1);
+            }
         }
     }
 
     // The main game loop that uses all the above functions
+    /* Need to change this function around because the while loop is only evaluated before the body of the function
+    * is executed. So when round is ended after playhitorstand with endround, even though gamestatus is set to false,
+    * the while loop keeps going and doesn't 'update' until all these methods are done. Maybe add checks between each.*/
     public static void playGameLoop(){
         initializeGame();
         while(state.getGameStatus()){
             startRound();
             dealCards();
-            askHitOrStand();
-            playAfterHitOrStand();
-            checkWin();
+            playHitOrStand();
+            revealHouseHand();
+            houseHitOrStand();
+            houseHit();
+            compareHands();
             endRound();
         }
     }

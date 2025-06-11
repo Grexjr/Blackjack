@@ -5,7 +5,8 @@ package arc;
     public enum Question{
         // Enum question values
         HITORSTAND("Hit or Stand?", "1: Hit", "2: Stand"),
-        ONEORELEVEN("Set Ace as one or eleven?", "1: One", "2: Eleven");
+        ONEORELEVEN("Set Ace as one or eleven?", "1: One", "2: Eleven"),
+        CONTINUEORNOT("Continue?","1: Yes","2:No");
 
         // Declaration of enum constants
         private final String question,answerOne,answerTwo;

@@ -27,22 +27,24 @@ public class Deck {
     // Method to update currentSize
     public void updateCurrentSize(){this.currentSize = this.contents.size();}
 
-    // The method to initialize the deck by first adding the spades, then the clubs, etc; could be made better with recursion
+    // The method to initialize the deck with the new card system
     protected void initializeDeck(){
-        for(int i = 0; i < (this.maxSize /4); i++){ // Spades
-            this.contents.add(new Card(i + 1,1));
-        }
-        for(int i = 0; i < (this.maxSize /4); i++){ // Clubs
-            this.contents.add(new Card(i + 1,2));
-        }
-        for(int i = 0; i < (this.maxSize /4); i++){ // Hearts
-            this.contents.add(new Card(i + 1,3));
-        }
-        for(int i = 0; i < (this.maxSize /4); i++){ // Diamonds
-            this.contents.add(new Card(i + 1,4));
+        for(CardSuit suit : CardSuit.values()){
+            for(CardRank rank : CardRank.values()){
+                this.contents.add(new Card(rank,suit));
+            }
         }
     }
 
     // The method to shuffle the deck into a random configuration once it has been initialized
     protected void shuffleDeck(){Collections.shuffle(this.contents);}
+
+
+    // Testing method to print the deck
+    public void printDeck() {
+        for (Card card : contents) {
+            System.out.println(card.getCardRank().getRankName() + card.getCardSuit().getSuitName());
+            System.out.println(card.getCardRank().getRankValue());
+        }
+    }
 }
