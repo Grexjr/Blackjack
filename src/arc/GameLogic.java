@@ -19,12 +19,31 @@ public class GameLogic {
     public static void continueGame(){state.setGameStatus(true);}
 
     // Method to start the round by creating new round object
-    public static void startRound(){round = new Round();}
+    public static void startRound(){
+        if(!state.getRoundStatus()){
+            state.setRoundStatus(true);
+            state.setHandCounter(state.getHandCounter()+1);
+            System.out.println("Round: " + state.getHandCounter());
+            round = new Round();
+        }
+    }
 
     // Method that occurs at the end of each round to print gamestate and ask player if continue
     public static void endRound(){
+        //Debug Lines
+        //System.out.println("Hit debug for end round.");
+        //System.out.println("EndRound first values: " + state.getGameStatus() + " | " + state.getRoundStatus());
+
         System.out.println(state);
+        state.setRoundStatus(false);
+
+        //Debug
+        //System.out.println("EndRound second values: " + state.getGameStatus() + " | " + state.getRoundStatus());
+
         Utilities.askQuestion(round,Question.CONTINUEORNOT);
+
+        //Debug
+        //System.out.println("EndRound third values: " + state.getGameStatus() + " | " + state.getRoundStatus());
     }
 
     // Method to sum up players hands with the included architecture for if ace is 1 or 11
@@ -161,6 +180,8 @@ public class GameLogic {
                 sumPlayerHand(round.getPlayer1());
                 System.out.println("Player has: " + round.getPlayer1().getHandSum());
                 runPlayerBustOrBlackjack(round.getPlayer1());
+                // Debug Line
+                //System.out.println("Player hit or stand values: " + state.getGameStatus() + " | " + state.getRoundStatus());
             }else{
                 System.out.println("Player chooses to stand!");
                 break;
@@ -214,6 +235,8 @@ public class GameLogic {
                 sumPlayerHand(round.getPlayer2());
                 System.out.println("House has: " + round.getPlayer2().getHandSum());
                 runHouseBustOrBlackjack(round.getPlayer2());
+                // Debug Line
+                //System.out.println("House Hit or stand values: " + state.getGameStatus() + " | " + state.getRoundStatus());
             }else{
                 round.getPlayer2().setHitStatus(false);
                 break;
@@ -244,20 +267,33 @@ public class GameLogic {
     }
 
     // The main game loop that uses all the above functions
-    /* Need to change this function around because the while loop is only evaluated before the body of the function
-    * is executed. So when round is ended after playhitorstand with endround, even though gamestatus is set to false,
-    * the while loop keeps going and doesn't 'update' until all these methods are done. Maybe add checks between each.*/
+    // REF LINE: Need the !state.getRoundStatus condition after every call to endRound() b/c otherwise never evaluates that round ends and breaks
     public static void playGameLoop(){
         initializeGame();
-        while(state.getGameStatus()){
+        while(state.getGameStatus()) {
+
+            //Debug Lines
+            //int iterations = 0;
+            //System.out.println("Returned to start of loop! Iteration #" + ++iterations);
+
             startRound();
-            dealCards();
-            playHitOrStand();
-            revealHouseHand();
-            houseHitOrStand();
-            houseHit();
-            compareHands();
-            endRound();
+            if(!state.getGameStatus()){break;}
+            while(state.getRoundStatus()) {
+                dealCards();
+                if(!state.getGameStatus()){break;}
+                playHitOrStand();
+                if(!state.getGameStatus() || !state.getRoundStatus()){break;} // Need the additional condition after any endRound() call: see line above
+                revealHouseHand();
+                if(!state.getGameStatus()){break;}
+                houseHitOrStand();
+                if(!state.getGameStatus()){break;}
+                houseHit();
+                if(!state.getGameStatus() || !state.getRoundStatus()){break;}
+                compareHands();
+                if(!state.getGameStatus()){break;}
+                endRound();
+                if(!state.getGameStatus()){break;}
+            }
         }
     }
 }

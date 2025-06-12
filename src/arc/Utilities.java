@@ -50,7 +50,7 @@ public class Utilities {
                     GameLogic.continueGame();
                     break;
                 case 2:
-                    GameLogic.endGame(); // Sometimes will ask twice about continuing and print state, not sure why
+                    GameLogic.endGame();
                     break;
                 default:
                     System.out.println("Invalid input!");
