@@ -18,6 +18,23 @@ public class Card {
     public CardSuit getCardSuit(){return this.cardSuit;}
     public CardRank getCardRank(){return this.cardRank;}
 
+    @Override
+    public boolean equals(Object obj){
+        //override equals so that cards are equal based on suit and rank
+        // if the comparison object is null, it does not equal this one
+        if(obj == null){
+            return false;
+        }
+        // if the comparison object is not a card, it does not equal this one
+        if(obj.getClass() != this.getClass()) {
+            return false;
+        }
+        // cast the comparison object to a card
+        final Card card = (Card) obj;
+        // cards are seen as equivalent with same rank and suit
+        return card.cardRank == this.cardRank && card.cardSuit == this.cardSuit;
+    }
+
     // Card toString
     @Override
     public String toString(){

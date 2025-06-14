@@ -31,9 +31,23 @@ public class Deck {
     protected void initializeDeck(){
         for(CardSuit suit : CardSuit.values()){
             for(CardRank rank : CardRank.values()){
-                this.contents.add(new Card(rank,suit));
+                this.addCard(new Card(rank, suit));
             }
         }
+    }
+
+    protected boolean hasCard(Card card){
+        return this.contents.contains(card);
+    }
+
+    protected void addCard(Card card){
+        if(!this.hasCard(card)){
+            this.contents.add(card);
+        }
+    }
+
+    protected Card drawCard(){
+        return this.contents.removeFirst();
     }
 
     // The method to shuffle the deck into a random configuration once it has been initialized
