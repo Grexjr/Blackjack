@@ -51,11 +51,11 @@ public class GameLogic {
         int sum = 0;
         // If ace is 1
         if(!player.getAceStatus()) {
-            for(Card card : player.getPlayerHand()){sum += card.getCardRank().getRankValue();}
+            for(Card card : player.getPlayerHand().getCards()){sum += card.getCardRank().getRankValue();}
         }
         // If ace is 11
         else{
-            for(Card card : player.getPlayerHand()){
+            for(Card card : player.getPlayerHand().getCards()){
                 // Sums up every card, ace being 1
                 sum += card.getCardRank().getRankValue();
                 // If the card is an ace, then it adds 10 to the sum (1 + 10 for 11)
@@ -147,7 +147,7 @@ public class GameLogic {
     public static void houseAceCalculation(){
         int tempSum = 0;
         Player house = round.getPlayer2();
-        for(Card card : house.getPlayerHand()){
+        for(Card card : house.getPlayerHand().getCards()){
             tempSum += card.getCardRank().getRankValue();
             if(card.getCardRank().equals(CardRank.ACE)){
                 tempSum += 10;
@@ -176,7 +176,8 @@ public class GameLogic {
                 System.out.println("Player hits! ");
                 round.dealCard(round.getPlayer1());
                 System.out.println("Player gets: " +
-                        round.getPlayer1().getPlayerHand().get(round.getPlayer1().getPlayerHand().size()-1));
+                        round.getPlayer1().getPlayerHand().getCards().getLast()
+                );
                 sumPlayerHand(round.getPlayer1());
                 System.out.println("Player has: " + round.getPlayer1().getHandSum());
                 runPlayerBustOrBlackjack(round.getPlayer1());
@@ -193,7 +194,7 @@ public class GameLogic {
     public static void revealHouseHand(){
         boolean houseHasAce = false;
 
-        for(Card card : round.getPlayer2().getPlayerHand()){
+        for(Card card : round.getPlayer2().getPlayerHand().getCards()){
             if(card.getCardRank().equals(CardRank.ACE)){
                 houseHasAce = true;
             }else{
@@ -202,7 +203,8 @@ public class GameLogic {
         }
 
         System.out.println("House second card is: " +
-                round.getPlayer2().getCard(round.getPlayer2().getPlayerHand().size()-1));
+                round.getPlayer2().getCard(round.getPlayer2().getPlayerHand().getCurrentSize()-1)
+        );
         sumPlayerHand(round.getPlayer2());
         if(houseHasAce){
             if(round.getPlayer2().getAceStatus()){
@@ -231,7 +233,8 @@ public class GameLogic {
             if(round.getPlayer2().getHitStatus()){
                 round.dealCard(round.getPlayer2());
                 System.out.println("House gets: " +
-                        round.getPlayer2().getPlayerHand().get(round.getPlayer2().getPlayerHand().size()-1));
+                        round.getPlayer2().getPlayerHand().getCards().getLast()
+                );
                 sumPlayerHand(round.getPlayer2());
                 System.out.println("House has: " + round.getPlayer2().getHandSum());
                 runHouseBustOrBlackjack(round.getPlayer2());

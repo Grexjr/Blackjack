@@ -24,10 +24,7 @@ public class Round {
     // Method to deal a card to a player, then remove that card from the deck. Maybe this should go elsewhere
     public void dealCard(Player player){
         // Adds the top card from the deck to the player's hand
-        player.getPlayerHand().add(this.roundDeck.getContents().get(0));
-
-        // removes the dealt card from the deck and updates size so new card is in position 0
-        this.roundDeck.getContents().remove(0);
-        this.roundDeck.updateCurrentSize();
+        // draw card also removes it from the deck
+        player.getPlayerHand().addCard(this.roundDeck.drawCard());
         }
     }

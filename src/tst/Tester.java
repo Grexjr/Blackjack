@@ -7,26 +7,26 @@ public class Tester {
     private static void testDeckCreation(){
         Deck deck = new Deck();
         System.out.println(deck.getCurrentSize());
-        deck.printDeck();
+        deck.print();
     }
 
     private static void testCardName(){
         Deck deck = new Deck();
-        for(int i = 0; i < deck.getMaxSize(); i++) {System.out.println(deck.getContents().get(i).toString());}
+        for(int i = 0; i < deck.getMaxSize(); i++) {System.out.println(deck.getCards().get(i).toString());}
     }
 
     private static void testDealing(){
         Round round = new Round();
         System.out.println(round.getRoundDeck().getCurrentSize());
-        System.out.println("Top Card: " + round.getRoundDeck().getContents().get(0).getCardRank());
+        System.out.println("Top Card: " + round.getRoundDeck().getCards().get(0).getCardRank());
 
         round.dealCard(round.getPlayer1());
-        System.out.println("Player card: " + round.getPlayer1().getPlayerHand().get(0).getCardRank());
+        System.out.println("Player card: " + round.getPlayer1().getPlayerHand().getCards().get(0).getCardRank());
 
-        System.out.println("Top Card: " + round.getRoundDeck().getContents().get(0).getCardRank());
+        System.out.println("Top Card: " + round.getRoundDeck().getCards().get(0).getCardRank());
 
         System.out.println(round.getRoundDeck().getCurrentSize());
-        System.out.println(round.getRoundDeck().getContents().size());
+        System.out.println(round.getRoundDeck().getCards().size());
     }
 
     private static void testFullDeal(){
