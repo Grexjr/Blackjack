@@ -14,6 +14,11 @@ public class CardPile {
         this.cards = new ArrayList<Card>();
     }
 
+    // overload constructor to allow cards to be passed in
+    public CardPile(ArrayList<Card> cards){
+        this.cards = cards;
+    }
+
     // The getters
     public ArrayList<Card> getCards(){return this.cards;}
     public int getCurrentSize(){return this.cards.size();}
@@ -50,5 +55,15 @@ public class CardPile {
             System.out.println(card.getCardRank().getRankName() + card.getCardSuit().getSuitName());
             System.out.println(card.getCardRank().getRankValue());
         }
+    }
+
+    @Override
+    public String toString(){
+        String val = "";
+        for(Card card: this.cards){
+            val += card.toString();
+        }
+
+        return val;
     }
 }

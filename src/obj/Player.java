@@ -27,6 +27,10 @@ public class Player {
     public boolean getAceStatus(){return this.acestatus;}
     public boolean isStanding(){return this.standing;}
 
+    public CardPile visibleCards(){
+        return new CardPile(this.playerHand.visibleCards());
+    }
+
     public void setHitStatus(boolean val){this.hitstatus = val;}
     public void setAceStatus(boolean val){this.acestatus = val;}
 }

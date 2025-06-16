@@ -1,5 +1,6 @@
 package obj;
 
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -19,8 +20,14 @@ public class HumanPlayer extends Player {
         return Choice.Invalid;
     }
 
-    public Choice makeChoice(){
+    public Choice makeChoice(ArrayList<Player> opponents){
         Choice choice = Choice.Invalid;
+
+
+        System.out.println("Opponents have the following cards:");
+        for(Player player: opponents){
+            System.out.println(player.visibleCards().toString());
+        }
 
         while(choice == Choice.Invalid){
             System.out.println("Player: Hit or Stand?");

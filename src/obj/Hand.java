@@ -19,7 +19,7 @@ public class Hand extends CardPile {
         return this.cards.remove(this.cards.indexOf(card));
     }
 
-    protected int handValue(){
+    protected int valueOfCards(ArrayList<Card> cards){
         int value = 0;
 
         ArrayList<Card> aces = this.getCardsByRank(CardRank.ACE);
@@ -40,5 +40,17 @@ public class Hand extends CardPile {
         }
 
         return value;
+    }
+
+    protected ArrayList<Card> visibleCards(){
+        return new ArrayList<Card>(this.cards.subList(1, this.cards.size()));
+    }
+
+    protected int visibleCardValue(){
+        return valueOfCards(this.visibleCards());
+    }
+
+    protected int handValue(){
+        return valueOfCards(this.cards);
     }
 }
