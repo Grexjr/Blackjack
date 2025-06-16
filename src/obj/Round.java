@@ -1,5 +1,8 @@
 package obj;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class Round {
 
     // The two pieces of information about each round; the deck and the players - might not want to create
@@ -26,5 +29,31 @@ public class Round {
         // Adds the top card from the deck to the player's hand
         // draw card also removes it from the deck
         player.getPlayerHand().addCard(this.roundDeck.drawCard());
+    }
+
+    public boolean roundOver(ArrayList<Player> players){
+        for(Player player: players){
+            if(player.busted() || player.blackjack()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void playerChoice(Player player, Choice choice){
+        if(player.isStanding()){
+
+        }
+        if(choice == Choice.Hit){
+            dealCard(player);
         }
     }
+
+    public void playRound(ArrayList<Player> players){
+        while(!this.roundOver(players)){
+            for(Player player: players){
+
+            }
+        }
+    }
+}
