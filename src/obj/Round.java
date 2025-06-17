@@ -2,6 +2,7 @@ package obj;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class Round {
 
@@ -32,12 +33,17 @@ public class Round {
     }
 
     public boolean roundOver(ArrayList<Player> players){
+        int numFinished = 0;
+
         for(Player player: players){
-            if(player.busted() || player.blackjack()){
+            if(player.blackjack()){
                 return true;
             }
+            if(player.busted() || player.isStanding()){
+                numFinished += 1;
+            }
         }
-        return false;
+        return numFinished == players.size();
     }
 
     public void playerChoice(Player player, Choice choice){
@@ -49,11 +55,51 @@ public class Round {
         }
     }
 
-    public void playRound(ArrayList<Player> players){
-        while(!this.roundOver(players)){
-            for(Player player: players){
+    public void determineWinner(Dealer dealer, ArrayList<Player> players){
+        if(dealer.blackjack()) {
+            System.out.println("dealer wins with blackjack!");
+        } else {
+            ArrayList<Player> winners = new ArrayList<Player>();
+            Player singleWinner;
+            int maxScore = 0;
 
+            for(Player player: players){
+                if(player.blackjack()){
+                    winners.add(player);
+                }
+                if(player.handValue() > maxScore){
+                    maxScore = player.handValue();
+                    singleWinner = player;
+                }
+            }
+
+            if(winners.size() > 0){
+                System.out.println("multiple winners!");
+            } else {
+                if(maxScore > dealer.handValue()){
+                    System.out.println("player wins!");
+                } else {
+                    System.out.println("dealer wins...");
+                }
             }
         }
+    }
+
+    public void playRound(Dealer dealer, ArrayList<Player> players){
+        while(!this.roundOver(players)){
+            for(Player player: players){
+                Choice playerChoice = player.makeChoice(players);
+                switch(playerChoice){
+                    case Choice.Hit:
+                        player.drawCard(this.roundDeck.drawCard());
+                    case Choice.Stand:
+                        player.stand();
+                    case Choice.Busted:
+                        System.out.println("player busted");
+                }
+            }
+        }
+
+        this.determineWinner(dealer, players);
     }
 }

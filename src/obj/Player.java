@@ -10,27 +10,35 @@ public class Player {
     // The constructor; null values aren't the best, but will never be referenced
     public Player(){
         this.playerHand = new Hand();
-        this.hitstatus = false;
-        this.acestatus = false;
         this.standing = false;
     }
 
     // The getters
     public Hand getPlayerHand(){return this.playerHand;}
     public Card getCard(int index){return this.playerHand.getCards().get(index);}
+    public void drawCard(Card card){this.playerHand.addCard(card);}
+
 
     public boolean busted(){return this.playerHand.handValue() > 21;}
     public boolean blackjack(){return this.playerHand.handValue() == 21;}
     public int handValue(){return this.playerHand.handValue();}
 
-    public boolean getHitStatus(){return this.hitstatus;}
-    public boolean getAceStatus(){return this.acestatus;}
+
+    public void stand(){this.standing = true;}
     public boolean isStanding(){return this.standing;}
 
     public CardPile visibleCards(){
         return new CardPile(this.playerHand.visibleCards());
     }
 
-    public void setHitStatus(boolean val){this.hitstatus = val;}
-    public void setAceStatus(boolean val){this.acestatus = val;}
+    public Choice makeChoice(ArrayList<Player> opponents){
+        if(this.busted()){
+            return Choice.Busted;
+        }
+
+        if(this.standing){
+            return Choice.Stand;
+        }
+        return Choice.Invalid;
+    }
 }

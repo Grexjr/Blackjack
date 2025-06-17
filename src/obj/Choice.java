@@ -6,6 +6,7 @@ public enum Choice {
     Hit("Hit"),
     Stand("Stand"),
     Split("Split"),
+    Busted("Busted"),
     Invalid("Invalid");
 
     // Declaration of constants

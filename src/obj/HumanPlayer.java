@@ -21,8 +21,7 @@ public class HumanPlayer extends Player {
     }
 
     public Choice makeChoice(ArrayList<Player> opponents){
-        Choice choice = Choice.Invalid;
-
+        Choice choice = super.makeChoice(opponents);
 
         System.out.println("Opponents have the following cards:");
         for(Player player: opponents){
@@ -35,6 +34,5 @@ public class HumanPlayer extends Player {
         }
 
         return choice;
-
     }
 }
