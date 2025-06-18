@@ -55,51 +55,88 @@ public class Round {
         }
     }
 
-    public void determineWinner(Dealer dealer, ArrayList<Player> players){
-        if(dealer.blackjack()) {
-            System.out.println("dealer wins with blackjack!");
-        } else {
-            ArrayList<Player> winners = new ArrayList<Player>();
-            Player singleWinner;
-            int maxScore = 0;
+    public ArrayList<Player> determineWinners(ArrayList<Player> players){
+        ArrayList<Player> winners = new ArrayList<Player>();
+        int maxScore = 0;
 
-            for(Player player: players){
-                if(player.blackjack()){
+        for(Player player: players){
+            if(player.blackjack()){
+                if(player instanceof Dealer){
+                    winners = new ArrayList<Player>();
                     winners.add(player);
+                    return winners;
                 }
-                if(player.handValue() > maxScore){
-                    maxScore = player.handValue();
-                    singleWinner = player;
-                }
+                winners.add(player);
             }
 
-            if(winners.size() > 0){
-                System.out.println("multiple winners!");
-            } else {
-                if(maxScore > dealer.handValue()){
-                    System.out.println("player wins!");
-                } else {
-                    System.out.println("dealer wins...");
+            if(player.handValue() > maxScore){
+                winners = new ArrayList<Player>();
+                maxScore = player.handValue();
+                winners.add(player);
+
+                if(player instanceof Dealer){
+                    return winners;
                 }
+
+
+            } else {
+                if(player.handValue() == maxScore){
+                    if(player instanceof Dealer) {
+                        winners = new ArrayList<Player>();
+                        winners.add(player);
+                        return winners;
+                    }
+                    winners.add(player);
+                }
+            }
+        }
+
+        return winners;
+    }
+
+    public void takePlayerTurn(Player player, ArrayList<Player> players){
+        while(!player.isStanding() && !player.busted()) {
+            Choice playerChoice = player.makeChoice(players);
+            switch (playerChoice) {
+                case Choice.Hit:
+                    player.drawCard(this.roundDeck.drawCard());
+                case Choice.Stand:
+                    player.stand();
+                case Choice.Busted:
+                    System.out.println("player busted");
             }
         }
     }
 
-    public void playRound(Dealer dealer, ArrayList<Player> players){
+    public void validatePlayers(ArrayList<Player> players){
+        int numDealers = 0;
+        for(Player player: players){
+            if(player instanceof Dealer){
+                numDealers += 1;
+            }
+        }
+        if(numDealers != 1){
+            // TODO: raise error
+        }
+
+        if(!(players.getLast() instanceof Dealer)){
+            // TODO: raise error
+        }
+    }
+
+    public void playRound(ArrayList<Player> players){
+        this.validatePlayers(players);
+
         while(!this.roundOver(players)){
             for(Player player: players){
-                Choice playerChoice = player.makeChoice(players);
-                switch(playerChoice){
-                    case Choice.Hit:
-                        player.drawCard(this.roundDeck.drawCard());
-                    case Choice.Stand:
-                        player.stand();
-                    case Choice.Busted:
-                        System.out.println("player busted");
-                }
+                this.takePlayerTurn(player, players);
             }
         }
 
-        this.determineWinner(dealer, players);
+        ArrayList<Player> winners = this.determineWinners(players);
+        System.out.printf("There were %d winners!\nHere they are:\n", winners.size());
+        for(Player winner: winners){
+            winner.winGame();
+        }
     }
 }
