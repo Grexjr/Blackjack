@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 public class Dealer extends Player{
     final int DEALER_MINIMUM_VALUE = 17;
+    public Dealer(){
+        super("DEALER");
+    }
 
+    @Override
     public Choice makeChoice(ArrayList<Player> opponents){
-        if(this.busted()){
-            return Choice.Busted;
-        }
-
-        if(this.isStanding()){
-            return Choice.Stand;
+        Choice choice = super.makeChoice(opponents);
+        if(choice != Choice.Invalid){
+            return choice;
         }
 
         if(this.blackjack()){

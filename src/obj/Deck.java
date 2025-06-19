@@ -27,6 +27,7 @@ public class Deck extends CardPile {
         }
     }
 
+    @Override
     protected void addCard(Card card){
         if(!this.hasCard(card)){
             this.cards.add(card);

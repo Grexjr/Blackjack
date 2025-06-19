@@ -13,18 +13,18 @@ public class Utilities {
     // Maybe put this into the question file
     public static void askQuestion(Round round, Question question){
         System.out.println(question.getQuestion());
-        System.out.println(question.getAnswerOne());
-        System.out.println(question.getAnswerTwo());
+        //System.out.println(question.getAnswerOne());
+        //System.out.println(question.getAnswerTwo());
 
         int choice = playerInputOpportunity();
 
         if(question.equals(Question.HITORSTAND)){
             switch(choice){
                 case 1:
-                    round.getPlayer1().setHitStatus(true);
+                    //round.getPlayer1().setHitStatus(true);
                     break;
                 case 2:
-                    round.getPlayer1().setHitStatus(false);
+                    //round.getPlayer1().setHitStatus(false);
                     break;
                 default:
                     System.out.println("Invalid input!");
@@ -34,10 +34,10 @@ public class Utilities {
         } else if(question.equals(Question.ONEORELEVEN)){
             switch(choice){
                 case 1:
-                    round.getPlayer1().setAceStatus(false);
+                    //round.getPlayer1().setAceStatus(false);
                     break;
                 case 2:
-                    round.getPlayer1().setAceStatus(true);
+                    //round.getPlayer1().setAceStatus(true);
                     break;
                 default:
                     System.out.println("Invalid input!");
@@ -47,10 +47,10 @@ public class Utilities {
         } else if(question.equals(Question.CONTINUEORNOT)){
             switch(choice){
                 case 1:
-                    GameLogic.continueGame();
+                    //GameLogic.continueGame();
                     break;
                 case 2:
-                    GameLogic.endGame();
+                    //GameLogic.endGame();
                     break;
                 default:
                     System.out.println("Invalid input!");

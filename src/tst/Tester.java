@@ -1,6 +1,8 @@
 package tst;
-import arc.*;
+//import arc.*;
 import obj.*;
+
+import java.util.ArrayList;
 
 public class Tester {
 
@@ -15,7 +17,7 @@ public class Tester {
         for(int i = 0; i < deck.getMaxSize(); i++) {System.out.println(deck.getCards().get(i).toString());}
     }
 
-    private static void testDealing(){
+    /*private static void testDealing(){
         Round round = new Round();
         System.out.println(round.getRoundDeck().getCurrentSize());
         System.out.println("Top Card: " + round.getRoundDeck().getCards().get(0).getCardRank());
@@ -78,7 +80,7 @@ public class Tester {
         GameLogic.houseHit();
         GameLogic.compareHands();
         GameLogic.endRound();
-    }
+    }*/
 
 
     public static void main(String args[]){
@@ -87,6 +89,9 @@ public class Tester {
         //testGameParts();
         //testDeckCreation();
         //testFullDeal();
-        testGame();
+        Dealer dealer = new Dealer();
+        HumanPlayer player = new HumanPlayer("YOU");
+        Game game = new Game(dealer, player);
+        game.playGame();
     }
 }

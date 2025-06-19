@@ -4,24 +4,27 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import java.lang.RuntimeException;
+
 public class Round {
 
     // The two pieces of information about each round; the deck and the players - might not want to create
     // players every single round and rather have them persist with the game state?
-    protected Deck roundDeck;
-    protected Player player1,player2;
+    private Deck roundDeck;
+    private Dealer dealer;
+    private ArrayList<Player> players;
 
     // The constructor for the round
-    public Round(){
+    public Round(Dealer dealer, ArrayList<Player> players){
         this.roundDeck = new Deck();
-        this.player1 = new Player();
-        this.player2 = new Player();
+        this.dealer = dealer;
+        this.players = players;
+
+        this.initialDeal();
     }
 
     // The getters
     public Deck getRoundDeck(){return this.roundDeck;}
-    public Player getPlayer1(){return this.player1;}
-    public Player getPlayer2(){return this.player2;}
 
     // The setters
 
@@ -32,57 +35,56 @@ public class Round {
         player.getPlayerHand().addCard(this.roundDeck.drawCard());
     }
 
-    public boolean roundOver(ArrayList<Player> players){
+    public boolean roundOver(){
         int numFinished = 0;
 
-        for(Player player: players){
+        for(Player player: this.getFullPlayerList()){
             if(player.blackjack()){
-                return true;
+                numFinished += 1;
+                if(player instanceof Dealer) {
+                    return true;
+                }
             }
             if(player.busted() || player.isStanding()){
                 numFinished += 1;
             }
         }
-        return numFinished == players.size();
+        return numFinished == this.getFullPlayerList().size();
     }
 
-    public void playerChoice(Player player, Choice choice){
-        if(player.isStanding()){
-
-        }
-        if(choice == Choice.Hit){
-            dealCard(player);
-        }
-    }
-
-    public ArrayList<Player> determineWinners(ArrayList<Player> players){
-        ArrayList<Player> winners = new ArrayList<Player>();
+    public ArrayList<Player> determineWinners(){
+        ArrayList<Player> winners = new ArrayList<>();
         int maxScore = 0;
 
-        for(Player player: players){
+        for(Player player: this.getFullPlayerList()){
+            System.out.printf(
+                    "%s score %d with cards %s\n",
+                    player.getName(),
+                    player.handValue(),
+                    player.getPlayerHand()
+            );
+
             if(player.blackjack()){
                 if(player instanceof Dealer){
-                    winners = new ArrayList<Player>();
+                    winners = new ArrayList<>();
                     winners.add(player);
                     return winners;
                 }
                 winners.add(player);
             }
 
-            if(player.handValue() > maxScore){
-                winners = new ArrayList<Player>();
+            if(player.handValue() > maxScore && !(player.busted())){
+                winners = new ArrayList<>();
                 maxScore = player.handValue();
                 winners.add(player);
 
                 if(player instanceof Dealer){
                     return winners;
                 }
-
-
             } else {
                 if(player.handValue() == maxScore){
                     if(player instanceof Dealer) {
-                        winners = new ArrayList<Player>();
+                        winners = new ArrayList<>();
                         winners.add(player);
                         return winners;
                     }
@@ -94,46 +96,62 @@ public class Round {
         return winners;
     }
 
-    public void takePlayerTurn(Player player, ArrayList<Player> players){
+    public void takePlayerTurn(Player player){
+        ArrayList<Player> otherPlayers = new ArrayList<>(this.getFullPlayerList());
+        otherPlayers.remove(player);
+
         while(!player.isStanding() && !player.busted()) {
-            Choice playerChoice = player.makeChoice(players);
+            Choice playerChoice = player.makeChoice(otherPlayers);
             switch (playerChoice) {
-                case Choice.Hit:
+                case Choice.Hit -> {
+                    System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
-                case Choice.Stand:
+                }
+                case Choice.Stand -> {
                     player.stand();
-                case Choice.Busted:
-                    System.out.println("player busted");
+                }
+                case Choice.Busted -> {
+                    System.out.printf(
+                            "%s busted with %d: %s!\n",
+                            player.getName(),
+                            player.handValue(),
+                            player.getPlayerHand()
+                    );
+                }
+                case Choice.Invalid -> {
+                    throw new RuntimeException("INVALID CHOICE!");
+                }
             }
         }
     }
 
-    public void validatePlayers(ArrayList<Player> players){
-        int numDealers = 0;
+    public ArrayList<Player> getFullPlayerList(){
+        ArrayList<Player> allPlayers = new ArrayList<>(this.players);
+        allPlayers.add(this.dealer);
+        return allPlayers;
+    }
+
+    private void initialDeal(){
+        dealer.startGame();
         for(Player player: players){
-            if(player instanceof Dealer){
-                numDealers += 1;
-            }
-        }
-        if(numDealers != 1){
-            // TODO: raise error
+            player.startGame();
         }
 
-        if(!(players.getLast() instanceof Dealer)){
-            // TODO: raise error
+        for(int i = 0; i < 2; i++) {
+            for (Player player : this.getFullPlayerList()) {
+                this.dealCard(player);
+            }
         }
     }
 
-    public void playRound(ArrayList<Player> players){
-        this.validatePlayers(players);
-
-        while(!this.roundOver(players)){
-            for(Player player: players){
-                this.takePlayerTurn(player, players);
+    public void playRound(){
+        while(!this.roundOver()){
+            for(Player player: this.getFullPlayerList()){
+                this.takePlayerTurn(player);
             }
         }
 
-        ArrayList<Player> winners = this.determineWinners(players);
+        ArrayList<Player> winners = this.determineWinners();
         System.out.printf("There were %d winners!\nHere they are:\n", winners.size());
         for(Player winner: winners){
             winner.winGame();

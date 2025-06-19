@@ -59,11 +59,6 @@ public class CardPile {
 
     @Override
     public String toString(){
-        String val = "";
-        for(Card card: this.cards){
-            val += card.toString();
-        }
-
-        return val;
+        return String.format("%s", this.cards);
     }
 }
