@@ -24,6 +24,7 @@ public class Game {
     }
 
     private void playRound(){
+        // TODO: allow games to track an arraylist of rounds, in case a user wants to see the overall game summary
         Round round = new Round(this.dealer, this.players);
         round.playRound();
     }

@@ -23,6 +23,8 @@ public class Round {
         this.dealer = dealer;
         this.players = players;
 
+        // TODO: add error handling to make sure the list of players does not have a dealer, etc
+
         this.initialDeal();
     }
 
