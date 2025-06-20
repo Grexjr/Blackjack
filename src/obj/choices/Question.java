@@ -1,4 +1,4 @@
-package arc;
+package obj.choices;
 
     /* Enum to create the different questions, can have different numbers of parameters for different
     questions, but need a constructor for each variation. Should this be moved to a different class? */

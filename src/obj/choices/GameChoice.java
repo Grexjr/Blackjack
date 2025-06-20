@@ -1,4 +1,4 @@
-package obj;
+package obj.choices;
 
 // Enum for card rank
 public enum GameChoice {

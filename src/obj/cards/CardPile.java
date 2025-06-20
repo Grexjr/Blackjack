@@ -1,4 +1,4 @@
-package obj;
+package obj.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +27,7 @@ public class CardPile {
         return this.cards.contains(card);
     }
 
-    protected void addCard(Card card){
+    public void addCard(Card card){
         this.cards.add(card);
     }
 
@@ -41,7 +41,7 @@ public class CardPile {
         return rankCards;
     }
 
-    protected Card drawCard(){
+    public Card drawCard(){
         return this.cards.removeFirst();
     }
 

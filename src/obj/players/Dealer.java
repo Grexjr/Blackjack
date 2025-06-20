@@ -1,4 +1,6 @@
-package obj;
+package obj.players;
+
+import obj.choices.Choice;
 
 import java.util.ArrayList;
 
@@ -11,6 +13,7 @@ public class Dealer extends Player{
     @Override
     public Choice makeChoice(ArrayList<Player> opponents){
         Choice choice = super.makeChoice(opponents);
+
         if(choice != Choice.Invalid){
             return choice;
         }
@@ -20,7 +23,8 @@ public class Dealer extends Player{
         }
 
         for(Player player: opponents){
-            if((!player.busted() && this.handValue() < DEALER_MINIMUM_VALUE) || player.blackjack()){
+            // TODO: determine proper dealer hit/stand logic
+            if(player.handValue() >= this.handValue() || player.blackjack()){
                 return Choice.Hit;
             }
         }

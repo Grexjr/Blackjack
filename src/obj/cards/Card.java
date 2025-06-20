@@ -1,4 +1,4 @@
-package obj;
+package obj.cards;
 
 // The class outlining the card object - need to deal with ace either being 1 or 11, and all face cards being 10
 public class Card {

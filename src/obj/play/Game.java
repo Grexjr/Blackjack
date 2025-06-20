@@ -1,6 +1,9 @@
-package obj;
+package obj.play;
 
-import arc.Question;
+import obj.choices.Question;
+import obj.choices.GameChoice;
+import obj.players.Dealer;
+import obj.players.Player;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -25,6 +28,7 @@ public class Game {
         round.playRound();
     }
 
+    // TODO: abstract out the choice logic a bit here and for the player detect choice
     private GameChoice detectContinueChoice(){
         Scanner kb = new Scanner(System.in);
         String choice = kb.nextLine();

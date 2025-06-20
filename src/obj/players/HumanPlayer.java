@@ -1,9 +1,9 @@
-package obj;
+package obj.players;
 
-import arc.Question;
+import obj.choices.Choice;
+import obj.choices.Question;
 
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class HumanPlayer extends Player {

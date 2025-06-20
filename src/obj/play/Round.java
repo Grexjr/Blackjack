@@ -1,8 +1,11 @@
-package obj;
+package obj.play;
 
-import java.lang.reflect.Array;
+import obj.cards.Deck;
+import obj.choices.Choice;
+import obj.players.Dealer;
+import obj.players.Player;
+
 import java.util.ArrayList;
-import java.util.Optional;
 
 import java.lang.RuntimeException;
 
@@ -23,10 +26,18 @@ public class Round {
         this.initialDeal();
     }
 
-    // The getters
-    public Deck getRoundDeck(){return this.roundDeck;}
+    private void initialDeal(){
+        dealer.startGame();
+        for(Player player: players){
+            player.startGame();
+        }
 
-    // The setters
+        for(int i = 0; i < 2; i++) {
+            for (Player player : this.getFullPlayerList()) {
+                this.dealCard(player);
+            }
+        }
+    }
 
     // Method to deal a card to a player, then remove that card from the deck. Maybe this should go elsewhere
     public void dealCard(Player player){
@@ -36,11 +47,13 @@ public class Round {
     }
 
     public boolean roundOver(){
+        // see how many players are in a "finished" state
         int numFinished = 0;
 
         for(Player player: this.getFullPlayerList()){
             if(player.blackjack()){
                 numFinished += 1;
+                // if the dealer has blackjack, the game is over
                 if(player instanceof Dealer) {
                     return true;
                 }
@@ -52,6 +65,7 @@ public class Round {
         return numFinished == this.getFullPlayerList().size();
     }
 
+    // TODO: refactor this function to be cleaner
     public ArrayList<Player> determineWinners(){
         ArrayList<Player> winners = new ArrayList<>();
         int maxScore = 0;
@@ -65,6 +79,7 @@ public class Round {
             );
 
             if(player.blackjack()){
+                // if dealer has blackjack, they are the only winner
                 if(player instanceof Dealer){
                     winners = new ArrayList<>();
                     winners.add(player);
@@ -106,6 +121,8 @@ public class Round {
                 case Choice.Hit -> {
                     System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
+                    // TODO: refactor so that player has player.visibleCards() which calls visibleCards for their hand
+                    System.out.printf("%s has cards: %s", player.getName(), player.getPlayerHand().visibleCards());
                 }
                 case Choice.Stand -> {
                     player.stand();
@@ -129,19 +146,6 @@ public class Round {
         ArrayList<Player> allPlayers = new ArrayList<>(this.players);
         allPlayers.add(this.dealer);
         return allPlayers;
-    }
-
-    private void initialDeal(){
-        dealer.startGame();
-        for(Player player: players){
-            player.startGame();
-        }
-
-        for(int i = 0; i < 2; i++) {
-            for (Player player : this.getFullPlayerList()) {
-                this.dealCard(player);
-            }
-        }
     }
 
     public void playRound(){

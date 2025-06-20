@@ -1,8 +1,6 @@
-package obj;
+package obj.cards;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
 
 // This class outlines the deck object
 public class Hand extends CardPile {
@@ -22,6 +20,7 @@ public class Hand extends CardPile {
     protected int valueOfCards(ArrayList<Card> cards){
         int value = 0;
 
+        // TODO: refactor this to be a bit cleaner
         ArrayList<Card> aces = this.getCardsByRank(CardRank.ACE);
         for (Card card: cards) {
             if (!aces.contains(card)) {
@@ -42,7 +41,7 @@ public class Hand extends CardPile {
         return value;
     }
 
-    protected ArrayList<Card> visibleCards(){
+    public ArrayList<Card> visibleCards(){
         return new ArrayList<Card>(this.cards.subList(1, this.cards.size()));
     }
 
@@ -50,7 +49,7 @@ public class Hand extends CardPile {
         return valueOfCards(this.visibleCards());
     }
 
-    protected int handValue(){
+    public int handValue(){
         return valueOfCards(this.cards);
     }
 }
