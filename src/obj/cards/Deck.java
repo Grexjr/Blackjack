@@ -1,7 +1,4 @@
-package obj;
-
-import java.util.ArrayList;
-import java.util.Collections;
+package obj.cards;
 
 // This class outlines the deck object
 public class Deck extends CardPile {
@@ -27,7 +24,8 @@ public class Deck extends CardPile {
         }
     }
 
-    protected void addCard(Card card){
+    @Override
+    public void addCard(Card card){
         if(!this.hasCard(card)){
             this.cards.add(card);
         }

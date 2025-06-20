@@ -1,4 +1,4 @@
-package obj;
+package obj.cards;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +14,11 @@ public class CardPile {
         this.cards = new ArrayList<Card>();
     }
 
+    // overload constructor to allow cards to be passed in
+    public CardPile(ArrayList<Card> cards){
+        this.cards = cards;
+    }
+
     // The getters
     public ArrayList<Card> getCards(){return this.cards;}
     public int getCurrentSize(){return this.cards.size();}
@@ -22,7 +27,7 @@ public class CardPile {
         return this.cards.contains(card);
     }
 
-    protected void addCard(Card card){
+    public void addCard(Card card){
         this.cards.add(card);
     }
 
@@ -36,7 +41,7 @@ public class CardPile {
         return rankCards;
     }
 
-    protected Card drawCard(){
+    public Card drawCard(){
         return this.cards.removeFirst();
     }
 
@@ -50,5 +55,10 @@ public class CardPile {
             System.out.println(card.getCardRank().getRankName() + card.getCardSuit().getSuitName());
             System.out.println(card.getCardRank().getRankValue());
         }
+    }
+
+    @Override
+    public String toString(){
+        return String.format("%s", this.cards);
     }
 }
