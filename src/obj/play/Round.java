@@ -151,7 +151,7 @@ public class Round {
     }
 
     public void playRound(){
-0        while(!this.roundOver()){
+        while(!this.roundOver()){
             for(Player player: this.getFullPlayerList()){
                 this.takePlayerTurn(player);
             }
