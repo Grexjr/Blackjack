@@ -54,7 +54,7 @@ public class Round {
 
         for(Player player: this.getFullPlayerList()){
             if(player.blackjack()){
-                numFinished += 1;
+                // numFinished += 1; will always ask stand on blackjack
                 // if the dealer has blackjack, the game is over
                 if(player instanceof Dealer) {
                     return true;
@@ -64,7 +64,7 @@ public class Round {
                 numFinished += 1;
             }
         }
-        return numFinished == this.getFullPlayerList().size();
+        return numFinished >= this.getFullPlayerList().size();
     }
 
     // TODO: refactor this function to be cleaner
