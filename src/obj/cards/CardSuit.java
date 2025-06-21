@@ -1,4 +1,4 @@
-package obj;
+package obj.cards;
 
 // Enum for card suit
 public enum CardSuit {
