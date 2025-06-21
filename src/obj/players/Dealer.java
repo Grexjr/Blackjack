@@ -24,7 +24,7 @@ public class Dealer extends Player{
 
         for(Player player: opponents){
             // TODO: determine proper dealer hit/stand logic
-            if(player.handValue() >= this.handValue() || player.blackjack()){
+            if((player.handValue() >= this.handValue() || player.blackjack()) && !this.busted()){
                 return Choice.Hit;
             }
         }

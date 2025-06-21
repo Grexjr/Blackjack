@@ -48,25 +48,6 @@ public class Round {
         player.getPlayerHand().addCard(this.roundDeck.drawCard());
     }
 
-    public boolean roundOver(){
-        // see how many players are in a "finished" state
-        int numFinished = 0;
-
-        for(Player player: this.getFullPlayerList()){
-            if(player.blackjack()){
-                numFinished += 1;
-                // if the dealer has blackjack, the game is over
-                if(player instanceof Dealer) {
-                    return true;
-                }
-            }
-            if(player.busted() || player.isStanding()){
-                numFinished += 1;
-            }
-        }
-        return numFinished == this.getFullPlayerList().size();
-    }
-
     // TODO: refactor this function to be cleaner
     public ArrayList<Player> determineWinners(){
         ArrayList<Player> winners = new ArrayList<>();
@@ -124,7 +105,7 @@ public class Round {
                     System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
                     // TODO: refactor so that player has player.visibleCards() which calls visibleCards for their hand
-                    System.out.printf("%s has cards: %s", player.getName(), player.getPlayerHand().visibleCards());
+                    System.out.printf("%s has cards: %s \n", player.getName(), player.getPlayerHand().visibleCards());
                 }
                 case Choice.Stand -> {
                     player.stand();
@@ -150,16 +131,14 @@ public class Round {
         return allPlayers;
     }
 
-    public void playRound(){
-        while(!this.roundOver()){
-            for(Player player: this.getFullPlayerList()){
-                this.takePlayerTurn(player);
-            }
+    public void playRound() {
+        for (Player player : this.getFullPlayerList()) {
+            this.takePlayerTurn(player);
         }
 
         ArrayList<Player> winners = this.determineWinners();
         System.out.printf("There were %d winners!\nHere they are:\n", winners.size());
-        for(Player winner: winners){
+        for (Player winner : winners) {
             winner.winGame();
         }
     }
