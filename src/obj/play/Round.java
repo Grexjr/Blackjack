@@ -18,9 +18,15 @@ public class Round {
     private Dealer dealer;
     private ArrayList<Player> players;
 
-    // TODO (gavin + ryan): add constructor for games with just one player
+    // The construct for the round with one player
+    public Round(Dealer dealer, Player player){
+        this.roundDeck = new Deck();
+        this.dealer = dealer;
+        this.players = new ArrayList<Player>();
+        this.players.add(player);
+    }
 
-    // The constructor for the round
+    // The constructor for the round with an ArrayList of players
     public Round(Dealer dealer, ArrayList<Player> players){
         this.roundDeck = new Deck();
         this.dealer = dealer;
