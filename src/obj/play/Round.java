@@ -2,6 +2,7 @@ package obj.play;
 
 import obj.cards.Deck;
 import obj.choices.Choice;
+import obj.exceptions.PlayerValidationException;
 import obj.players.Dealer;
 import obj.players.Player;
 
@@ -17,15 +18,26 @@ public class Round {
     private Dealer dealer;
     private ArrayList<Player> players;
 
+    // TODO (gavin + ryan): add constructor for games with just one player
+
     // The constructor for the round
     public Round(Dealer dealer, ArrayList<Player> players){
         this.roundDeck = new Deck();
         this.dealer = dealer;
         this.players = players;
 
-        // TODO: add error handling to make sure the list of players does not have a dealer, etc
+        this.validatePlayers();
 
         this.initialDeal();
+    }
+
+    // Throw exception if dealer in players list
+    private void validatePlayers(){
+        for(Player player: this.players){
+            if(player instanceof Dealer){
+                throw new PlayerValidationException();
+            }
+        }
     }
 
     private void initialDeal(){
