@@ -66,12 +66,12 @@ public class Round {
         player.getPlayerHand().addCard(this.roundDeck.drawCard());
     }
 
-    // TODO: refactor this function to be cleaner
     public ArrayList<Player> determineWinners(){
         ArrayList<Player> winners = new ArrayList<>();
         int maxScore = 0;
 
         for(Player player: this.getFullPlayerList()){
+
             System.out.printf(
                     "%s score %d with cards %s\n",
                     player.getName(),
@@ -79,34 +79,30 @@ public class Round {
                     player.getPlayerHand()
             );
 
+            // If player has blackjack, add them to the winners list
             if(player.blackjack()){
-                // if dealer has blackjack, they are the only winner
-                if(player instanceof Dealer){
-                    winners = new ArrayList<>();
-                    winners.add(player);
-                    return winners;
-                }
+                winners = new ArrayList<>();
                 winners.add(player);
             }
 
-            if(player.handValue() > maxScore && !(player.busted())){
+            // If player has higher hand value than the max score of round + isn't busted, add them to the winners list
+            // Else if because no need to evaluate this if a player has blackjack: already been added to winners
+            else if(player.handValue() > maxScore && !(player.busted())){
                 winners = new ArrayList<>();
                 maxScore = player.handValue();
                 winners.add(player);
+            }
 
-                if(player instanceof Dealer){
+            // Iterate through the winners to see if Dealer wins. If so, only they win
+            for(Player winner: winners){
+                if(winner instanceof Dealer){
+                    winners = new ArrayList<>();
+                    winners.add(winner);
                     return winners;
                 }
-            } else {
-                if(player.handValue() == maxScore){
-                    if(player instanceof Dealer) {
-                        winners = new ArrayList<>();
-                        winners.add(player);
-                        return winners;
-                    }
-                    winners.add(player);
-                }
+                // Otherwise, return winners at bottom of method
             }
+
         }
 
         return winners;
@@ -122,8 +118,7 @@ public class Round {
                 case Choice.Hit -> {
                     System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
-                    // TODO: refactor so that player has player.visibleCards() which calls visibleCards for their hand
-                    System.out.printf("%s has cards: %s \n", player.getName(), player.getPlayerHand().visibleCards());
+                    System.out.printf("%s has cards: %s \n", player.getName(), player.visibleCards());
                 }
                 case Choice.Stand -> {
                     player.stand();
@@ -156,6 +151,18 @@ public class Round {
 
         ArrayList<Player> winners = this.determineWinners();
         System.out.printf("There were %d winners!\nHere they are:\n", winners.size());
+
+        // Printing out winners from the "Here they are:" in the above printf -- may not need
+        if (!winners.isEmpty()) {
+            for (Player winner : winners) {
+                String winnerName = winner.getName();
+                System.out.printf("%s\n", winnerName);
+            }
+        } else{
+            System.out.print("None\n");
+        }
+
+
         for (Player winner : winners) {
             winner.winGame();
         }
