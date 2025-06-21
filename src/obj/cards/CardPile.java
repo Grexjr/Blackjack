@@ -42,7 +42,8 @@ public class CardPile {
     }
 
     public Card drawCard(){
-        return this.cards.removeFirst();
+        //return this.cards.removeFirst();
+        return this.cards.remove(0);
     }
 
     // The method to shuffle the deck into a random configuration once it has been initialized

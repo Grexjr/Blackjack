@@ -120,16 +120,16 @@ public class Round {
         while(!player.isStanding() && !player.busted()) {
             Choice playerChoice = player.makeChoice(otherPlayers);
             switch (playerChoice) {
-                case Choice.Hit -> {
+                case Hit -> {
                     System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
                     // TODO: refactor so that player has player.visibleCards() which calls visibleCards for their hand
                     System.out.printf("%s has cards: %s", player.getName(), player.getPlayerHand().visibleCards());
                 }
-                case Choice.Stand -> {
+                case Stand -> {
                     player.stand();
                 }
-                case Choice.Busted -> {
+                case Busted -> {
                     System.out.printf(
                             "%s busted with %d: %s!\n",
                             player.getName(),
@@ -137,7 +137,7 @@ public class Round {
                             player.getPlayerHand()
                     );
                 }
-                case Choice.Invalid -> {
+                case Invalid -> {
                     throw new RuntimeException("INVALID CHOICE!");
                 }
             }
@@ -151,7 +151,7 @@ public class Round {
     }
 
     public void playRound(){
-        while(!this.roundOver()){
+0        while(!this.roundOver()){
             for(Player player: this.getFullPlayerList()){
                 this.takePlayerTurn(player);
             }

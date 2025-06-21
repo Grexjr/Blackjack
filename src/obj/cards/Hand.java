@@ -35,7 +35,8 @@ public class Hand extends CardPile {
         // aces can be value 1 if the hand value is above 21
         while(value > 21 && !aces.isEmpty()){
             value -= 10;
-            aces.removeFirst();
+            //aces.removeFirst();
+            aces.remove(0);
         }
 
         return value;
