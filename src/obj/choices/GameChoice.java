@@ -3,9 +3,9 @@ package obj.choices;
 // Enum for card rank
 public enum GameChoice {
     // Rank values
-    Continue("Continue"),
-    Stop("Stop"),
-    Invalid("Invalid");
+    CONTINUE("Continue"),
+    STOP("Stop"),
+    INVALID("Invalid");
 
     // Declaration of constants
     private final String choice;

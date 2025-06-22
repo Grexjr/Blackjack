@@ -14,6 +14,7 @@ public class Player {
     private boolean standing;
     private int numWins, numGames;
     private String name;
+    private PlayerState playerState;
 
     // The constructor; null values aren't the best, but will never be referenced
     public Player(){
@@ -31,8 +32,9 @@ public class Player {
     public void startGame(){
         this.playerHand = new Hand();
         this.numGames += 1;
-        // TODO: maybe have a player.state instead
-        // can be an enum; STANDING, BUSTED, ACTIVE, etc
+        // TODO: make use of the player state
+        this.playerState = PlayerState.ACTIVE;
+        // TODO: get rid of the isStanding boolean
         this.standing = false;
     }
 
@@ -41,6 +43,7 @@ public class Player {
     public Card getCard(int index){return this.playerHand.getCards().get(index);}
     public String getName(){return this.name;}
     public boolean isStanding(){return this.standing;}
+    public PlayerState getPlayerState(){return this.playerState;}
 
     public boolean busted(){return this.playerHand.handValue() > 21;}
     public boolean blackjack(){return this.playerHand.handValue() == 21;}
@@ -65,14 +68,14 @@ public class Player {
     public Choice makeChoice(ArrayList<Player> opponents){
         if(this.busted()){
             System.out.printf("%s busted!\n", this.name);
-            return Choice.Busted;
+            return Choice.BUSTED;
         }
 
         if(this.standing){
             System.out.printf("%s is standing...", this.name);
-            return Choice.Stand;
+            return Choice.STAND;
         }
-        return Choice.Invalid;
+        return Choice.INVALID;
     }
 
     public float getWinPercentage(){

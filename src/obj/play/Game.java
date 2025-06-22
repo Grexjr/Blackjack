@@ -36,31 +36,31 @@ public class Game {
 
         if(choice.equalsIgnoreCase("continue") || choice.equals("1") || choice.equalsIgnoreCase("c")){
             System.out.println("continuing play...");
-            return GameChoice.Continue;
+            return GameChoice.CONTINUE;
         }
         if(choice.equalsIgnoreCase("stop") || choice.equals("2") || choice.equalsIgnoreCase("s")){
             System.out.println("ending play...");
-            return GameChoice.Stop;
+            return GameChoice.STOP;
         }
 
         System.out.println("Invalid choice! Please enter either ('Continue'/'1') or ('Stop'/'2')");
-        return GameChoice.Invalid;
+        return GameChoice.INVALID;
     }
 
     public void playGame(){
         GameChoice choice;
         do {
             // initialize choice as invalid so that we prompt for the user choice later
-            choice = GameChoice.Invalid;
+            choice = GameChoice.INVALID;
             // play the game round
             playRound();
 
             // detect if player wants to continue the game
-            while(choice == GameChoice.Invalid){
-                System.out.println(Question.CONTINUEORNOT);
+            while(choice == GameChoice.INVALID){
+                System.out.println(Question.CONTINUE_OR_NOT);
                 choice = this.detectContinueChoice();
             }
-        } while(choice == GameChoice.Continue);
+        } while(choice == GameChoice.CONTINUE);
 
         System.out.println("Game Over!");
     }

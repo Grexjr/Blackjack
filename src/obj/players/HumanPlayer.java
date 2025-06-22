@@ -17,15 +17,15 @@ public class HumanPlayer extends Player {
 
         if(choice.equalsIgnoreCase("hit") || choice.equals("1") || choice.equalsIgnoreCase("h")){
             System.out.println("player chose to hit");
-            return Choice.Hit;
+            return Choice.HIT;
         }
         if(choice.equalsIgnoreCase("stand") || choice.equals("2") || choice.equalsIgnoreCase("s")){
             System.out.println("player chose to stand");
-            return Choice.Stand;
+            return Choice.STAND;
         }
 
         System.out.println("Invalid choice! Please enter either ('Hit'/'1') or ('Stand'/'2')");
-        return Choice.Invalid;
+        return Choice.INVALID;
     }
 
     @Override
@@ -39,8 +39,8 @@ public class HumanPlayer extends Player {
             System.out.println(player.showVisibleCards());
         }
 
-        while(choice == Choice.Invalid){
-            System.out.println(Question.HITORSTAND.getQuestion());
+        while(choice == Choice.INVALID){
+            System.out.println(Question.HIT_OR_STAND.getQuestion());
             choice = this.detectChoice();
         }
 

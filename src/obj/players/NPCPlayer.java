@@ -4,12 +4,12 @@ import obj.choices.Choice;
 
 import java.util.ArrayList;
 
-public class Dealer extends Player{
-    final int DEALER_MINIMUM_VALUE = 17;
-    public Dealer(){
-        super("DEALER");
-    }
+public class NPCPlayer extends Player{
+    // Constructor using the UUID player constructor
+    public NPCPlayer(){}
 
+    // NPC Player AI to make choice
+    // TODO: Add separate NPC AI separate from the Dealer
     @Override
     public Choice makeChoice(ArrayList<Player> opponents){
         Choice choice = super.makeChoice(opponents);
@@ -22,8 +22,7 @@ public class Dealer extends Player{
             return Choice.STAND;
         }
 
-        //Dealer must hit if below 17, must stand if above 17
-        if(this.handValue() < DEALER_MINIMUM_VALUE){
+        if(this.handValue() < 16){
             return Choice.HIT;
         }
 
