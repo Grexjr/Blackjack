@@ -100,7 +100,8 @@ public class Round {
 
         // Loop through players to see if they win or what
         for(Player player: players){
-            // Check if non-dealers have blackjack and add them to winners
+            // Check if non-dealers have blackjack and add them to winners, don't need to loop through here because
+            // if dealer is added to winners the method ends, so no need to check at this point
             if(player.blackjack()){
                 winners.add(player);
             }
@@ -117,28 +118,16 @@ public class Round {
             }
         }
 
-        // If winners is not empty it means somebody got blackjack, check if that's dealer
-        if(!winners.isEmpty()){ // Maybe not needed
-            for(Player winner:winners){
-                if(winner instanceof Dealer){
-                    winners = new ArrayList<>();
-                    winners.add(winner);
-                    return winners;
-                }
-                return winners; // Do I need this return statement?
-            }
-        }
-
         // If winners is empty, go through potential winners
         for(Player winner:potentialWinners){
             // Loop through with a max score to compare scores between players
             // DON'T EXIT EARLY FOR DEALER; because then if he has lower hand he can win
-            if(winner.handValue() >= maxScore){
+            if(winner.handValue() > maxScore){
                 winners = new ArrayList<>();
                 winners.add(winner);
                 return winners;
             }
-
+            // This return means that if player handValues equal, they both win since they were added earlier
             return winners;
         }
 
