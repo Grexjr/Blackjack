@@ -72,21 +72,7 @@ public class Round {
 
     public ArrayList<Player> determineWinners(){
         ArrayList<Player> winners = new ArrayList<>();
-        ArrayList<Player> potentialWinners = new ArrayList<>();
-        int dealerScore = 0;
         int maxScore = 0;
-
-        // Check if dealer blackjacks, if so, he instantly wins
-        if(dealer.blackjack()){
-            winners.add(dealer);
-            return winners;
-        }
-
-        // If dealer is not busted, make his score benchmark other players have to beat and add him to potential winners
-        if(!dealer.busted()){
-            dealerScore = dealer.handValue();
-            potentialWinners.add(dealer);
-        }
 
         // Print player info
         for(Player player : getFullPlayerList()){
@@ -96,41 +82,20 @@ public class Round {
                     player.handValue(),
                     player.getPlayerHand()
             );
-        }
 
-        // Loop through players to see if they win or what
-        for(Player player: players){
-            // Check if non-dealers have blackjack and add them to winners, don't need to loop through here because
-            // if dealer is added to winners the method ends, so no need to check at this point
-            if(player.blackjack()){
-                winners.add(player);
-            }
-
-            // Check if a player is not busted and if not add them to potential winners if their hand is higher than dlr
+            // Check if player busted, if not evaluate against last hand
             if(!player.busted()){
-                if(player.handValue() > dealerScore){
+                if(player.handValue() > maxScore){
                     maxScore = player.handValue();
-                    potentialWinners.add(player);
-                    // Remove dealer from potential winners because hand is lower than a players'
-                    // Ties already handled; player not added to potential winner if dealer ties them
-                    potentialWinners.remove(dealer);
+                    // Remove the last player, since they have a lower score
+                    winners = new ArrayList<>();
+                    winners.add(player);
+                } else if(player.handValue() == maxScore){
+                    winners.add(player);
                 }
             }
-        }
 
-        // If winners is empty, go through potential winners
-        for(Player winner:potentialWinners){
-            // Loop through with a max score to compare scores between players
-            // DON'T EXIT EARLY FOR DEALER; because then if he has lower hand he can win
-            if(winner.handValue() > maxScore){
-                winners = new ArrayList<>();
-                winners.add(winner);
-                return winners;
-            }
-            // This return means that if player handValues equal, they both win since they were added earlier
-            return winners;
         }
-
         return winners;
     }
 

@@ -28,10 +28,12 @@ public class Tester {
     public static void main(String args[]){
         Dealer dealer = new Dealer();
         HumanPlayer player = new HumanPlayer("YOU");
-        HumanPlayer player2 = new HumanPlayer("THEY");
+        HumanPlayer player2 = new HumanPlayer("PLAYER2");
+        HumanPlayer player3 = new HumanPlayer("PLAYER3");
         ArrayList<Player> players = new ArrayList<>();
         players.add(player);
         players.add(player2);
+        players.add(player3);
         Game game = new Game(dealer, players);
         game.playGame();
     }
