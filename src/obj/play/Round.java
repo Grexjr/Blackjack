@@ -24,6 +24,10 @@ public class Round {
         this.dealer = dealer;
         this.players = new ArrayList<Player>();
         this.players.add(player);
+
+        this.validatePlayers();
+
+        this.initialDeal();
     }
 
     // The constructor for the round with an ArrayList of players
@@ -68,41 +72,74 @@ public class Round {
 
     public ArrayList<Player> determineWinners(){
         ArrayList<Player> winners = new ArrayList<>();
+        ArrayList<Player> potentialWinners = new ArrayList<>();
+        int dealerScore = 0;
         int maxScore = 0;
 
-        for(Player player: this.getFullPlayerList()){
+        // Check if dealer blackjacks, if so, he instantly wins
+        if(dealer.blackjack()){
+            winners.add(dealer);
+            return winners;
+        }
 
+        // If dealer is not busted, make his score benchmark other players have to beat and add him to potential winners
+        if(!dealer.busted()){
+            dealerScore = dealer.handValue();
+            potentialWinners.add(dealer);
+        }
+
+        // Print player info
+        for(Player player : getFullPlayerList()){
             System.out.printf(
                     "%s score %d with cards %s\n",
                     player.getName(),
                     player.handValue(),
                     player.getPlayerHand()
             );
+        }
 
-            // If player has blackjack, add them to the winners list
+        // Loop through players to see if they win or what
+        for(Player player: players){
+            // Check if non-dealers have blackjack and add them to winners
             if(player.blackjack()){
-                winners = new ArrayList<>();
                 winners.add(player);
             }
 
-            // If player has higher hand value than the max score of round + isn't busted, add them to the winners list
-            // Else if because no need to evaluate this if a player has blackjack: already been added to winners
-            else if(player.handValue() > maxScore && !(player.busted())){
-                winners = new ArrayList<>();
-                maxScore = player.handValue();
-                winners.add(player);
+            // Check if a player is not busted and if not add them to potential winners if their hand is higher than dlr
+            if(!player.busted()){
+                if(player.handValue() > dealerScore){
+                    maxScore = player.handValue();
+                    potentialWinners.add(player);
+                    // Remove dealer from potential winners because hand is lower than a players'
+                    // Ties already handled; player not added to potential winner if dealer ties them
+                    potentialWinners.remove(dealer);
+                }
             }
+        }
 
-            // Iterate through the winners to see if Dealer wins. If so, only they win
-            for(Player winner: winners){
+        // If winners is not empty it means somebody got blackjack, check if that's dealer
+        if(!winners.isEmpty()){ // Maybe not needed
+            for(Player winner:winners){
                 if(winner instanceof Dealer){
                     winners = new ArrayList<>();
                     winners.add(winner);
                     return winners;
                 }
-                // Otherwise, return winners at bottom of method
+                return winners; // Do I need this return statement?
+            }
+        }
+
+        // If winners is empty, go through potential winners
+        for(Player winner:potentialWinners){
+            // Loop through with a max score to compare scores between players
+            // DON'T EXIT EARLY FOR DEALER; because then if he has lower hand he can win
+            if(winner.handValue() >= maxScore){
+                winners = new ArrayList<>();
+                winners.add(winner);
+                return winners;
             }
 
+            return winners;
         }
 
         return winners;

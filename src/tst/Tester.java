@@ -4,6 +4,9 @@ import obj.cards.Deck;
 import obj.play.Game;
 import obj.players.Dealer;
 import obj.players.HumanPlayer;
+import obj.players.Player;
+
+import java.util.ArrayList;
 
 public class Tester {
 
@@ -18,10 +21,18 @@ public class Tester {
         for(int i = 0; i < deck.getMaxSize(); i++) {System.out.println(deck.getCards().get(i).toString());}
     }
 
+    private static void threePlayerGame(){
+
+    }
+
     public static void main(String args[]){
         Dealer dealer = new Dealer();
         HumanPlayer player = new HumanPlayer("YOU");
-        Game game = new Game(dealer, player);
+        HumanPlayer player2 = new HumanPlayer("THEY");
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(player);
+        players.add(player2);
+        Game game = new Game(dealer, players);
         game.playGame();
     }
 }
