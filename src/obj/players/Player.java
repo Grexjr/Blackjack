@@ -65,14 +65,14 @@ public class Player {
     public Choice makeChoice(ArrayList<Player> opponents){
         if(this.busted()){
             System.out.printf("%s busted!\n", this.name);
-            return Choice.Busted;
+            return Choice.BUSTED;
         }
 
         if(this.standing){
             System.out.printf("%s is standing...", this.name);
-            return Choice.Stand;
+            return Choice.STAND;
         }
-        return Choice.Invalid;
+        return Choice.INVALID;
     }
 
     public float getWinPercentage(){

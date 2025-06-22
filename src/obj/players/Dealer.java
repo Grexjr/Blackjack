@@ -14,21 +14,19 @@ public class Dealer extends Player{
     public Choice makeChoice(ArrayList<Player> opponents){
         Choice choice = super.makeChoice(opponents);
 
-        if(choice != Choice.Invalid){
+        if(choice != Choice.INVALID){
             return choice;
         }
 
         if(this.blackjack()){
-            return Choice.Stand;
+            return Choice.STAND;
         }
 
-        for(Player player: opponents){
-            // TODO: determine proper dealer hit/stand logic
-            if((player.handValue() >= this.handValue() || player.blackjack()) && !this.busted()){
-                return Choice.Hit;
-            }
+        //Dealer must hit if below 17, must stand if above 17
+        if(this.handValue() < DEALER_MINIMUM_VALUE){
+            return Choice.HIT;
         }
 
-        return Choice.Stand;
+        return Choice.STAND;
     }
 }

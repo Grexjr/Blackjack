@@ -4,9 +4,9 @@ package obj.choices;
     questions, but need a constructor for each variation. Should this be moved to a different class? */
     public enum Question{
         // Enum question values
-        HITORSTAND("Hit or Stand?", "1: Hit", "2: Stand"),
-        ONEORELEVEN("Set Ace as one or eleven?", "1: One", "2: Eleven"),
-        CONTINUEORNOT("Continue?","1: Yes","2:No");
+        HIT_OR_STAND("Hit or Stand?", "1: Hit", "2: Stand"),
+        ONE_OR_ELEVEN("Set Ace as one or eleven?", "1: One", "2: Eleven"),
+        CONTINUE_OR_NOT("Continue?","1: Yes","2:No");
 
         // Declaration of enum constants
         private final String question;

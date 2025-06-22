@@ -94,7 +94,6 @@ public class Round {
                     winners.add(player);
                 }
             }
-
         }
         return winners;
     }
@@ -106,15 +105,15 @@ public class Round {
         while(!player.isStanding() && !player.busted()) {
             Choice playerChoice = player.makeChoice(otherPlayers);
             switch (playerChoice) {
-                case Choice.Hit -> {
+                case Choice.HIT -> {
                     System.out.printf("%s hits!\n", player.getName());
                     player.drawCard(this.roundDeck.drawCard());
                     System.out.printf("%s has cards: %s \n", player.getName(), player.visibleCards());
                 }
-                case Choice.Stand -> {
+                case Choice.STAND -> {
                     player.stand();
                 }
-                case Choice.Busted -> {
+                case Choice.BUSTED -> {
                     System.out.printf(
                             "%s busted with %d: %s!\n",
                             player.getName(),
@@ -122,7 +121,7 @@ public class Round {
                             player.getPlayerHand()
                     );
                 }
-                case Choice.Invalid -> {
+                case Choice.INVALID -> {
                     throw new RuntimeException("INVALID CHOICE!");
                 }
             }
