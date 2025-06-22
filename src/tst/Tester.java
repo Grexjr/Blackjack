@@ -4,6 +4,7 @@ import obj.cards.Deck;
 import obj.play.Game;
 import obj.players.Dealer;
 import obj.players.HumanPlayer;
+import obj.players.NPCPlayer;
 import obj.players.Player;
 
 import java.util.ArrayList;
@@ -27,9 +28,9 @@ public class Tester {
 
     public static void main(String args[]){
         Dealer dealer = new Dealer();
-        HumanPlayer player = new HumanPlayer("YOU");
-        HumanPlayer player2 = new HumanPlayer("PLAYER2");
-        HumanPlayer player3 = new HumanPlayer("PLAYER3");
+        HumanPlayer player = new HumanPlayer("Player1");
+        NPCPlayer player2 = new NPCPlayer();
+        NPCPlayer player3 = new NPCPlayer();
         ArrayList<Player> players = new ArrayList<>();
         players.add(player);
         players.add(player2);
